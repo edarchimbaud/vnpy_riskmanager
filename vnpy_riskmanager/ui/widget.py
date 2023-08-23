@@ -20,11 +20,11 @@ class RiskManager(QtWidgets.QDialog):
 
     def init_ui(self) -> None:
         """"""
-        self.setWindowTitle("交易风控")
+        self.setWindowTitle("Trading Risk Control")
 
         # Create widgets
         self.active_combo: QtWidgets.QComboBox = QtWidgets.QComboBox()
-        self.active_combo.addItems(["停止", "启动"])
+        self.active_combo.addItems(["Stop", "Start"])
 
         self.flow_limit_spin: RiskManagerSpinBox = RiskManagerSpinBox()
         self.flow_clear_spin: RiskManagerSpinBox = RiskManagerSpinBox()
@@ -33,18 +33,18 @@ class RiskManager(QtWidgets.QDialog):
         self.active_limit_spin: RiskManagerSpinBox = RiskManagerSpinBox()
         self.cancel_limit_spin: RiskManagerSpinBox = RiskManagerSpinBox()
 
-        save_button: QtWidgets.QPushButton = QtWidgets.QPushButton("保存")
+        save_button: QtWidgets.QPushButton = QtWidgets.QPushButton("Save")
         save_button.clicked.connect(self.save_setting)
 
         # Form layout
         form: QtWidgets.QFormLayout = QtWidgets.QFormLayout()
-        form.addRow("风控运行状态", self.active_combo)
-        form.addRow("委托流控上限（笔）", self.flow_limit_spin)
-        form.addRow("委托流控清空（秒）", self.flow_clear_spin)
-        form.addRow("单笔委托上限（数量）", self.size_limit_spin)
-        form.addRow("总成交上限（笔）", self.trade_limit_spin)
-        form.addRow("活动委托上限（笔）", self.active_limit_spin)
-        form.addRow("合约撤单上限（笔）", self.cancel_limit_spin)
+        form.addRow("ACtivity status", self.active_combo)
+        form.addRow("Order flow limit", self.flow_limit_spin)
+        form.addRow("Order flow clear", self.flow_clear_spin)
+        form.addRow("Order linit size", self.size_limit_spin)
+        form.addRow("Total trade limit", self.trade_limit_spin)
+        form.addRow("Active limit", self.active_limit_spin)
+        form.addRow("Contract cancellation limit", self.cancel_limit_spin)
         form.addRow(save_button)
 
         self.setLayout(form)
@@ -56,7 +56,7 @@ class RiskManager(QtWidgets.QDialog):
     def save_setting(self) -> None:
         """"""
         active_text: str = self.active_combo.currentText()
-        if active_text == "启动":
+        if active_text == "Start":
             active: bool = True
         else:
             active: bool = False

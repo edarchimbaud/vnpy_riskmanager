@@ -1,4 +1,4 @@
-# VeighNa框架的事前风控模块
+# Ex ante risk control module of the VeighNa framework
 
 <p align="center">
   <img src ="https://vnpy.oss-cn-shanghai.aliyuncs.com/vnpy-logo.png"/>
@@ -11,24 +11,24 @@
     <img src ="https://img.shields.io/github/license/vnpy/vnpy.svg?color=orange"/>
 </p>
 
-## 说明
+## Description
 
-提供包括交易流控、下单数量、活动委托、撤单总数等规则的统计和限制，有效实现事前风控功能。
+Provides statistics and restrictions on rules including trade flow control, number of orders placed, active commissions, total number of withdrawn orders, etc., effectively realizing the function of ex-ante risk control.
 
-## 安装
+## Installation
 
-安装环境推荐基于3.0.0版本以上的【[**VeighNa Studio**](https://www.vnpy.com)】。
+The installation environment is recommended to be based on [[**VeighNa Studio**](https://edarchimbaud.com/veighna-website)] above version 3.0.0.
 
-直接使用pip命令：
+Use the pip command directly:
 
-```
+```bash
 pip install vnpy_riskmanager
 ```
 
 
-或者下载源代码后，解压后在cmd中运行：
+Or download the source code, unzip it and run it in cmd:
 
-```
+```bash
 pip install .
 ```
 

@@ -13,7 +13,7 @@ APP_NAME = "RiskManager"
 
 
 class RiskEngine(BaseEngine):
-    """风控引擎"""
+    """Risk Control Engine"""
 
     setting_filename: str = "risk_manager_setting.json"
 
@@ -49,7 +49,9 @@ class RiskEngine(BaseEngine):
         """
         Patch send order function of MainEngine.
         """
-        self._send_order: Callable[[OrderRequest, str], str] = self.main_engine.send_order
+        self._send_order: Callable[
+            [OrderRequest, str], str
+        ] = self.main_engine.send_order
         self.main_engine.send_order = self.send_order
 
     def send_order(self, req: OrderRequest, gateway_name: str) -> str:
@@ -71,9 +73,9 @@ class RiskEngine(BaseEngine):
         self.order_cancel_limit = setting["order_cancel_limit"]
 
         if self.active:
-            self.write_log("交易风控功能启动")
+            self.write_log("Trade Risk Control function started")
         else:
-            self.write_log("交易风控功能停止")
+            self.write_log("Trade Risk Control function stopped")
 
     def get_setting(self) -> dict:
         """"""
@@ -144,37 +146,43 @@ class RiskEngine(BaseEngine):
 
         # Check order volume
         if req.volume <= 0:
-            self.write_log("委托数量必须大于0")
+            self.write_log("The number of shares must be greater than 0")
             return False
 
         if req.volume > self.order_size_limit:
             self.write_log(
-                f"单笔委托数量{req.volume}，超过限制{self.order_size_limit}")
+                f"Number of single commissions {req.volume}, exceeded limit {self.order_size_limit}"
+            )
             return False
 
         # Check trade volume
         if self.trade_count >= self.trade_limit:
             self.write_log(
-                f"今日总成交合约数量{self.trade_count}，超过限制{self.trade_limit}")
+                f"Total number of contracts traded today {self.trade_count}, exceeded limit {self.trade_limit}"
+            )
             return False
 
         # Check flow count
         if self.order_flow_count >= self.order_flow_limit:
             self.write_log(
-                f"委托流数量{self.order_flow_count}，超过限制每{self.order_flow_clear}秒{self.order_flow_limit}次")
+                f"Order flow count {self.order_flow_count}, exceeded limit every {self.order_flow_clear} seconds {self.order_flow_limit}"
+            )
             return False
 
         # Check all active orders
         active_order_count: int = len(self.main_engine.get_all_active_orders())
         if active_order_count >= self.active_order_limit:
             self.write_log(
-                f"当前活动委托次数{active_order_count}，超过限制{self.active_order_limit}")
+                f"Current active order count {active_order_count}, exceeded limit {self.active_order_limit}"
+            )
             return False
 
         # Check order cancel counts
         order_cancel_count: int = self.order_cancel_counts.get(req.vt_symbol, 0)
         if order_cancel_count >= self.order_cancel_limit:
-            self.write_log(f"当日{req.vt_symbol}撤单次数{order_cancel_count}，超过限制{self.order_cancel_limit}")
+            self.write_log(
+                f"The number of {req.vt_symbol} order cancel {order_cancel_count} for the day, exceeded the limit {self.order_cancel_limit}"
+            )
             return False
 
         # Check order self trade
@@ -182,12 +190,16 @@ class RiskEngine(BaseEngine):
         if req.direction == Direction.LONG:
             best_ask: float = order_book.get_best_ask()
             if best_ask and req.price >= best_ask:
-                self.write_log(f"买入价格{req.price}大于等于已挂最低卖价{best_ask}，可能导致自成交")
+                self.write_log(
+                    f"The buy price {req.price} is greater than or equal to the listed minimum ask price {best_ask}, which may result in a self-transaction"
+                )
                 return False
         else:
             best_bid: float = order_book.get_best_bid()
             if best_bid and req.price <= best_bid:
-                self.write_log(f"卖出价格{req.price}小于等于已挂最低买价{best_bid}，可能导致自成交")
+                self.write_log(
+                    f"The sell price {req.price} is less than or equal to the lowest bid price {best_bid} that has been listed, which may result in a self-transaction"
+                )
                 return False
 
         # Add flow count if pass all checks
@@ -196,7 +208,9 @@ class RiskEngine(BaseEngine):
 
     def get_order_book(self, vt_symbol: str) -> "ActiveOrderBook":
         """"""
-        order_book: Optional[ActiveOrderBook] = self.active_order_books.get(vt_symbol, None)
+        order_book: Optional[ActiveOrderBook] = self.active_order_books.get(
+            vt_symbol, None
+        )
         if not order_book:
             order_book = ActiveOrderBook(vt_symbol)
             self.active_order_books[vt_symbol] = order_book
@@ -204,7 +218,7 @@ class RiskEngine(BaseEngine):
 
 
 class ActiveOrderBook:
-    """活动委托簿"""
+    """Active order book"""
 
     def __init__(self, vt_symbol: str) -> None:
         """"""
@@ -214,7 +228,7 @@ class ActiveOrderBook:
         self.ask_prices: Dict[str, float] = {}
 
     def update_order(self, order: OrderData) -> None:
-        """更新委托数据"""
+        """Updating order data"""
         if order.is_active():
             if order.direction == Direction.LONG:
                 self.bid_prices[order.vt_orderid] = order.price
@@ -227,13 +241,13 @@ class ActiveOrderBook:
                 self.ask_prices.pop(order.vt_orderid)
 
     def get_best_bid(self) -> float:
-        """获取最高买价"""
+        """Getting the highest bid"""
         if not self.bid_prices:
             return 0
         return max(self.bid_prices.values())
 
     def get_best_ask(self) -> float:
-        """获取最低卖价"""
+        """Get the lowest ask price"""
         if not self.ask_prices:
             return 0
         return min(self.ask_prices.values())

@@ -1,7 +1,7 @@
-# 1.0.4版本
+# Version 1.0.4
 
-1. 适配新版本的exec函数名，解决配置文件不加载的问题
+1. Adapted exec function name to solve the problem of configuration file not loading.
 
-# 1.0.3版本
+# Version 1.0.3
 
-1. 将模块的图标文件信息，改为完整路径字符串
+1. Change the module's icon file information to a full path string.
