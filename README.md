@@ -17,7 +17,7 @@ Provides statistics and restrictions on rules including trade flow control, numb
 
 ## Installation
 
-The installation environment is recommended to be based on [[**VeighNa Studio**](https://edarchimbaud.com/veighna-website)] above version 3.0.0.
+The installation environment is recommended to be based on [[**VeighNa Studio**](https://github.com/paperswithbacktest/vnpy)] above version 3.0.0.
 
 Use the pip command directly:
 
